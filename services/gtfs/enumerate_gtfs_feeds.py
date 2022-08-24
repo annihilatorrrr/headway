@@ -6,19 +6,14 @@ import csv
 def extract_column(name_row, data_row, wanted_column):
   try:
     column_index = name_row.index(wanted_column)
-    if column_index >= len(data_row):
-      return None
-    str_val = data_row[column_index]
-    return str_val
+    return None if column_index >= len(data_row) else data_row[column_index]
   except ValueError:
     return None
 
 def extract_column_float(name_row, data_row, wanted_column):
   try:
     str_val = extract_column(name_row, data_row, wanted_column)
-    if str_val is None or str_val == '':
-      return None
-    return float(str_val)
+    return None if str_val is None or str_val == '' else float(str_val)
   except ValueError:
     return None
 
@@ -38,13 +33,7 @@ def gtfs_line_intersects(name_row, data_row, bbox):
   # Thers's probably a better way to do this but it's a sunday morning and I haven't had coffee yet.
   if max_long < bbox[0] or max_lat < bbox[1]:
     return False
-  if max_long < bbox[0] or min_lat > bbox[3]:
-    return False
-  if min_long > bbox[2] or max_lat < bbox[1]:
-    return False
-  if min_long > bbox[2] or min_lat > bbox[3]:
-    return False
-  return True
+  return False if min_lat > bbox[3] else min_long <= bbox[2]
 
 try:
   bbox = [float(val) for val in os.environ['HEADWAY_BBOX'].strip().split(' ')]
